@@ -5,7 +5,7 @@ Created on Sun May 18 00:04:55 2014
 @author: billcary
 """
 
-from lxml import etree, objectify
+from lxml import objectify
 import pandas as pd
 
 file_name = './data/LM_PK602_sample_lmr_ws.xml'
@@ -21,16 +21,24 @@ pork_cuts= ['Loin Cuts', 'Butt Cuts', 'Picnic Cuts', 'Ham Cuts', 'Belly Cuts', \
     'Added Ingredient Cuts']
 
 # Initialize empty python lists to hold data to be extracted from the XML
-cuts = [] #"generic" list
-primal_cutout = []
-loads = []
+cuts = [] #"generic" list to store the USDA market data for individual cuts
+primal_cutout = [] # list to store primal cutout values
+loads = [] # list to store the number of loads comprising the market for the day
 
-# Iterate through the XML and extract the relevant data, placing it
-# into python lists.
-for report_date in root.report.iterchildren():
+'''
+Iterate through the XML and extract the relevant data, placing it
+into python lists.  We are extracting three key items: the primal values
+for the day, the number of loads comprising the day's totals and the real
+"meat" of the report - the day's market values for the individual pork cuts.
+Each of these three items is placed in a separate list because the data
+structures are different for each.  These lists will later be converted
+to pandas dataframes for further manipulation prior to formatting as Quandl
+csv data.
+'''
+for report_date in root.report.iterchildren(): #processing must be repeated for each day covered by the report
     date = report_date.attrib['report_date']
     
-    for report in report_date.iterchildren():
+    for report in report_date.iterchildren(): #reports consist of the primals, loads and individual pork cuts
         #print report.attrib['label']
         if report.attrib['label'] == 'Cutout and Primal Values':
             primal_cutout.append([date, report.record.attrib['pork_carcass'], report.record.attrib['pork_loin'], \
@@ -62,26 +70,12 @@ for report_date in root.report.iterchildren():
                 item.attrib['Item_Description'], item.attrib['total_pounds'], \
                 item.attrib['price_range_low'], item.attrib['price_range_high'], \
                 item.attrib['weighted_average']])
-            
-                if report.attrib['label'] == 'loin_cuts':
-                    loin_cuts = cuts[:]
-                elif report.attrib['label'] == 'butt_cuts':
-                    butt_cuts = cuts[:]
-                elif report.attrib['label'] == 'picnic_cuts':
-                    picnic_cuts = cuts[:]
-                elif report.attrib['label'] == 'ham_cuts':
-                    ham_cuts = cuts[:]
-                elif report.attrib['label'] == 'belly_cuts':
-                    belly_cuts = cuts[:]
-                elif report.attrib['label'] == 'sparerib_cuts':
-                    sparerib_cuts = cuts[:]
-                elif report.attrib['label'] == 'jowl_cuts':
-                    jowl_cuts = cuts[:]
-                elif report.attrib['label'] == 'trim_cuts':
-                    trim_cuts = cuts[:]
-                elif report.attrib['label'] == 'variety_cuts':
-                    variety_cuts = cuts[:]
-                elif report.attrib['label'] == 'ai_cuts':
-                    ai_cuts = cuts[:]
+
+'''
+pandas import and manipulation
+'''
+primal_headings = ['Carcass', 'Loin', 'Butt', 'Picnic', 'Rib', 'Ham', 'Belly']
+volume_headings = ['Total Loads', 'Trim/Process Loads']
+cuts_headings = ['Primal', 'Description', 'Total Pounds', 'Price - Low', 'Price - High', 'Wgt Avg Price']
             
 
