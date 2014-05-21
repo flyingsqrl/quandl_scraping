@@ -74,8 +74,18 @@ for report_date in root.report.iterchildren(): #processing must be repeated for 
 '''
 pandas import and manipulation
 '''
-primal_headings = ['Carcass', 'Loin', 'Butt', 'Picnic', 'Rib', 'Ham', 'Belly']
-volume_headings = ['Total Loads', 'Trim/Process Loads']
-cuts_headings = ['Primal', 'Description', 'Total Pounds', 'Price - Low', 'Price - High', 'Wgt Avg Price']
+primal_headings = ['Date', 'Carcass', 'Loin', 'Butt', 'Picnic', 'Rib', 'Ham', 'Belly']
+volume_headings = ['Date', 'Total Loads', 'Trim/Process Loads']
+cuts_headings = ['Date', 'Primal', 'Description', 'Total Pounds', 'Price - Low', 'Price - High', 'Wgt Avg Price']
             
+primal_df = pd.DataFrame(primal_cutout, columns = primal_headings)
+primal_df.index = primal_df['Date']
+primal_df.drop(['Date'],inplace=True,axis=1) 
 
+volume_df = pd.DataFrame(loads, columns = volume_headings)
+volume_df.index = volume_df['Date']
+volume_df.drop(['Date'],inplace=True,axis=1) 
+
+cuts_df = pd.DataFrame(cuts, columns = cuts_headings)
+cuts_df.index = cuts_df['Date']
+cuts_df.drop(['Date'],inplace=True,axis=1) 
