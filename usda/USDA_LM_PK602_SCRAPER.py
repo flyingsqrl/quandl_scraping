@@ -89,3 +89,5 @@ volume_df.drop(['Date'],inplace=True,axis=1)
 cuts_df = pd.DataFrame(cuts, columns = cuts_headings)
 cuts_df.index = cuts_df['Date']
 cuts_df.drop(['Date'],inplace=True,axis=1) 
+
+loin_df = cuts_df[cuts_df['Primal'] == 'Loin Cuts']
