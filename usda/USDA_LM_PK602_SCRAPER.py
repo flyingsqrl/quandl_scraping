@@ -8,6 +8,7 @@ Created on Sun May 18 00:04:55 2014
 from lxml import objectify
 import pandas as pd
 import sys
+import re
 
 file_name = './data/LM_PK602_sample_lmr_ws.xml'
 
@@ -122,7 +123,9 @@ for each pork cut in cuts_df:
 for cut in set(cuts_df['Description']):
     fltrd_cuts_df = cuts_df[cuts_df['Description'] == cut]
     primal = ''.join(set(fltrd_cuts_df['Primal']))
-    quandl_code = 'USDA_LM_PK602_' + cut
+    cut1 = re.sub('[ /]', '_', cut)
+    cut2 = re.sub('[,%#]', '', cut1).upper()
+    quandl_code = 'USDA_LM_PK602_' + cut2
     name = primal + ' - ' + cut
     fltrd_cuts_df = fltrd_cuts_df.drop('Date', 1).drop('Primal', 1).drop('Description', 1)
     
@@ -131,7 +134,7 @@ for cut in set(cuts_df['Description']):
     print 'description: |'
     print 'Daily total pounds, low price, high price and weighted average price'
     print 'from the USDA LM_PK602 report published by the USDA Agricultural Marketing Service (AMS).'
-    print 'This dataset covers ' + name
+    print 'This dataset covers ' + name + '.'
     print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
     print 'frequency: daily'
     print 'private: true'
