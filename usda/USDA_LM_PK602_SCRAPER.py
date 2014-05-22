@@ -7,6 +7,7 @@ Created on Sun May 18 00:04:55 2014
 
 from lxml import objectify
 import pandas as pd
+import sys
 
 file_name = './data/LM_PK602_sample_lmr_ws.xml'
 
@@ -101,16 +102,59 @@ trim_df = cuts_df[cuts_df['Primal'] == 'Trim Cuts'] # filter everything but loin
 variety_df = cuts_df[cuts_df['Primal'] == 'Variety Cuts'] # filter everything but loins
 ai_df = cuts_df[cuts_df['Primal'] == 'Added Ingredient Cuts'] # filter everything but loins
 
+
 '''
-Drop the "Primal" value from the dataframe, pivot into "wide" format, and
-reorder the columns to ensure that the metrics for each individual cut are
-kept together in one place, providing a view of all mtrics for a given cut
-without the need to scan across an extremely wide table.
+Format the dataframes to comply with Quandl csv format, write Quandl metadata to stdout and
+then write the dataframe to stdout.  This is done for each Primal dataframe in turn.
+
+To format the dataframe, we first "melt" it to get the data into "long" format,
+with only a single column containing numeric values, and another column that indicates
+the quantity represented by the value (pounds or prices).  We then create a new column
+"Attribute" consisting of a concatenation of the cut (ex "1/4 Trimmed Loin Paper")
+and the measure (ex LBS or $ High).  This facilitates later formatting into Quandl csv
+format.  We then drop the "Primal" and Description columns from the dataframe.  Finally,
+we pivot the dataframe back into into "wide" format, with only one row for each data, and many
+columns to store the different cuts and their numeric measures.  (The "Attribute" column
+created earlier.)
 '''
-loin_df = pd.melt(loin_df, id_vars = ['Date', 'Primal', 'Description'])
-loin_df['Attribute'] = loin_df['Description'] + '::' + loin_df['variable']
-loin_df = loin_df.drop('Primal', 1).drop('Description', 1)
-loin_df = loin_df.pivot(index='Date', columns='Attribute', values='value')
+
+'''
+for each pork cut in cuts_df:
+    filter cuts_df to only that specific cut
+    retain the cut in a variable
+    retain the primal in a variable
+    dynamically create a quandl code from the cut name
+    dynamically update the name from the primal value
+    dynamically update the description from the primal value and cut name
+    drop the date, primal and decription columns from cuts_df (leaving data index, lbs, low, high, avg)
+    print dynamically generated quandl metadata
+    print dataframe to stdout
+    print two blank lines in preparation for the next code
+    repeat for the next cut
+
+'''
+## format dataframe
+#loin_df = pd.melt(loin_df, id_vars = ['Date', 'Primal', 'Description'])
+#loin_df['Attribute'] = loin_df['Description'] + '::' + loin_df['variable']
+#loin_df = loin_df.drop('Primal', 1).drop('Description', 1)
+#loin_df = loin_df.pivot(index='Date', columns='Attribute', values='value')
+#
+#
+## Print quandl CSV metadata
+#print 'code: USDA_LM_PK602_LOIN'
+#print 'name: Loin data from the USDA LM_PK602 daily report'
+#print 'description: |'
+#print 'Daily total pounds, low price, high price and weighted average price'
+#print 'from the USDA LM_PK602 report published by the USDA Agricultural Marketing Service (AMS).'
+#print 'The data is published in "wide" format, allowing each specific loin cut'
+#print 'to be listed.'
+#print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
+#print 'frequency: daily'
+#print 'private: true'
+#print '---'
+#
+## Print the actual data to stdout
+#loin_df.to_csv(sys.stdout)
 
     
     
