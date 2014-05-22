@@ -67,16 +67,16 @@ for report_date in root.report.iterchildren(): #processing must be repeated for 
                     item.attrib['weighted_average'] = '0'
                     
                 cuts.append([date, report.attrib['label'], \
-                item.attrib['Item_Description'], item.attrib['total_pounds'], \
+                item.attrib['Item_Description'], item.attrib['total_pounds'].replace(',', ''), \
                 item.attrib['price_range_low'], item.attrib['price_range_high'], \
                 item.attrib['weighted_average']])
 
 '''
 pandas import and manipulation
 '''
-primal_headings = ['Date', 'Carcass', 'Loin', 'Butt', 'Picnic', 'Rib', 'Ham', 'Belly']
+primal_headings = ['Date', 'Carcass Value', 'Loin Value', 'Butt Value', 'Picnic Value', 'Rib Value', 'Ham Value', 'Belly Value']
 volume_headings = ['Date', 'Total Loads', 'Trim/Process Loads']
-cuts_headings = ['Date', 'Primal', 'Description', 'Total Pounds', 'Price - Low', 'Price - High', 'Wgt Avg Price']
+cuts_headings = ['Date', 'Primal', 'Description', 'LBS', '$ Low', '$ High', '$ WgtAvg']
             
 primal_df = pd.DataFrame(primal_cutout, columns = primal_headings)
 primal_df.index = primal_df['Date']
@@ -88,6 +88,37 @@ volume_df.drop(['Date'],inplace=True,axis=1)
 
 cuts_df = pd.DataFrame(cuts, columns = cuts_headings)
 cuts_df.index = cuts_df['Date']
-cuts_df.drop(['Date'],inplace=True,axis=1) 
+#cuts_df.drop(['Date'],inplace=True,axis=1) 
 
-loin_df = cuts_df[cuts_df['Primal'] == 'Loin Cuts']
+loin_df = cuts_df[cuts_df['Primal'] == 'Loin Cuts'] # filter everything but loins
+butt_df = cuts_df[cuts_df['Primal'] == 'Butt Cuts'] # filter everything but loins
+picnic_df = cuts_df[cuts_df['Primal'] == 'Picnic Cuts'] # filter everything but loins
+ham_df = cuts_df[cuts_df['Primal'] == 'Ham Cuts'] # filter everything but loins
+belly_df = cuts_df[cuts_df['Primal'] == 'Belly Cuts'] # filter everything but loins
+sparerib_df = cuts_df[cuts_df['Primal'] == 'Sparerib Cuts'] # filter everything but loins
+jowl_df = cuts_df[cuts_df['Primal'] == 'Jowl Cuts'] # filter everything but loins
+trim_df = cuts_df[cuts_df['Primal'] == 'Trim Cuts'] # filter everything but loins
+variety_df = cuts_df[cuts_df['Primal'] == 'Variety Cuts'] # filter everything but loins
+ai_df = cuts_df[cuts_df['Primal'] == 'Added Ingredient Cuts'] # filter everything but loins
+
+'''
+Drop the "Primal" value from the dataframe, pivot into "wide" format, and
+reorder the columns to ensure that the metrics for each individual cut are
+kept together in one place, providing a view of all mtrics for a given cut
+without the need to scan across an extremely wide table.
+'''
+loin_df = pd.melt(loin_df, id_vars = ['Date', 'Primal', 'Description'])
+loin_df['Attribute'] = loin_df['Description'] + '::' + loin_df['variable']
+loin_df = loin_df.drop('Primal', 1).drop('Description', 1)
+loin_df = loin_df.pivot(index='Date', columns='Attribute', values='value')
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
