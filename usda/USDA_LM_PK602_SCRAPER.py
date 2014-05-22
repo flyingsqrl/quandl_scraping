@@ -104,21 +104,6 @@ ai_df = cuts_df[cuts_df['Primal'] == 'Added Ingredient Cuts'] # filter everythin
 
 
 '''
-Format the dataframes to comply with Quandl csv format, write Quandl metadata to stdout and
-then write the dataframe to stdout.  This is done for each Primal dataframe in turn.
-
-To format the dataframe, we first "melt" it to get the data into "long" format,
-with only a single column containing numeric values, and another column that indicates
-the quantity represented by the value (pounds or prices).  We then create a new column
-"Attribute" consisting of a concatenation of the cut (ex "1/4 Trimmed Loin Paper")
-and the measure (ex LBS or $ High).  This facilitates later formatting into Quandl csv
-format.  We then drop the "Primal" and Description columns from the dataframe.  Finally,
-we pivot the dataframe back into into "wide" format, with only one row for each data, and many
-columns to store the different cuts and their numeric measures.  (The "Attribute" column
-created earlier.)
-'''
-
-'''
 for each pork cut in cuts_df:
     filter cuts_df to only that specific cut
     retain the cut in a variable
@@ -133,6 +118,28 @@ for each pork cut in cuts_df:
     repeat for the next cut
 
 '''
+
+for cut in set(cuts_df['Description']):
+    fltrd_cuts_df = cuts_df[cuts_df['Description'] == cut]
+    primal = ''.join(set(fltrd_cuts_df['Primal']))
+    quandl_code = 'USDA_LM_PK602_' + cut
+    name = primal + ' - ' + cut
+    fltrd_cuts_df = fltrd_cuts_df.drop('Date', 1).drop('Primal', 1).drop('Description', 1)
+    
+    print 'code: ' + quandl_code
+    print 'name: ' + name
+    print 'description: |'
+    print 'Daily total pounds, low price, high price and weighted average price'
+    print 'from the USDA LM_PK602 report published by the USDA Agricultural Marketing Service (AMS).'
+    print 'This dataset covers ' + name
+    print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
+    print 'frequency: daily'
+    print 'private: true'
+    print '---'
+    fltrd_cuts_df.to_csv(sys.stdout)
+    print ''
+    print ''
+    
 ## format dataframe
 #loin_df = pd.melt(loin_df, id_vars = ['Date', 'Primal', 'Description'])
 #loin_df['Attribute'] = loin_df['Description'] + '::' + loin_df['variable']
