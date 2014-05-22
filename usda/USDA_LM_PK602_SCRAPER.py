@@ -90,20 +90,37 @@ volume_df.drop(['Date'],inplace=True,axis=1)
 
 cuts_df = pd.DataFrame(cuts, columns = cuts_headings)
 cuts_df.index = cuts_df['Date']
-#cuts_df.drop(['Date'],inplace=True,axis=1) 
 
-loin_df = cuts_df[cuts_df['Primal'] == 'Loin Cuts'] # filter everything but loins
-butt_df = cuts_df[cuts_df['Primal'] == 'Butt Cuts'] # filter everything but loins
-picnic_df = cuts_df[cuts_df['Primal'] == 'Picnic Cuts'] # filter everything but loins
-ham_df = cuts_df[cuts_df['Primal'] == 'Ham Cuts'] # filter everything but loins
-belly_df = cuts_df[cuts_df['Primal'] == 'Belly Cuts'] # filter everything but loins
-sparerib_df = cuts_df[cuts_df['Primal'] == 'Sparerib Cuts'] # filter everything but loins
-jowl_df = cuts_df[cuts_df['Primal'] == 'Jowl Cuts'] # filter everything but loins
-trim_df = cuts_df[cuts_df['Primal'] == 'Trim Cuts'] # filter everything but loins
-variety_df = cuts_df[cuts_df['Primal'] == 'Variety Cuts'] # filter everything but loins
-ai_df = cuts_df[cuts_df['Primal'] == 'Added Ingredient Cuts'] # filter everything but loins
+# Print quandl dataset for cutout and primal values
+print 'code: USDA_LM_PK602_CUTOUT_PRIMAL'
+print 'name: Pork cutout and primal values'
+print 'description: |'
+print 'Daily pork cutout and primal values from the USDA LM_PK602 report published by the USDA'
+print 'Agricultural Marketing Service (AMS).'
+print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
+print 'frequency: daily'
+print 'private: true'
+print '---'
+primal_df.to_csv(sys.stdout)
+print ''
+print ''
+
+# Print quandl dataset for volume
+print 'code: USDA_LM_PK602_VOLUME'
+print 'name: Daily pork volume'
+print 'description: |'
+print 'Daily pork volume (full loads and trim/process loads) from the USDA LM_PK602 report'
+print 'published by the USDA Agricultural Marketing Service (AMS).'
+print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
+print 'frequency: daily'
+print 'private: true'
+print '---'
+volume_df.to_csv(sys.stdout)
+print ''
+print ''
 
 
+# Print quandl datasets for each pork cut
 '''
 for each pork cut in cuts_df:
     filter cuts_df to only that specific cut
@@ -123,14 +140,14 @@ for each pork cut in cuts_df:
 for cut in set(cuts_df['Description']):
     fltrd_cuts_df = cuts_df[cuts_df['Description'] == cut]
     primal = ''.join(set(fltrd_cuts_df['Primal']))
-    cut1 = re.sub('[ /]', '_', cut)
-    cut2 = re.sub('[,%#]', '', cut1).upper()
+    cut1 = re.sub('[ /]', '_', cut) # replace certain characters with '_'
+    cut2 = re.sub('[,%#]', '', cut1).upper() # remove certain characters
     quandl_code = 'USDA_LM_PK602_' + cut2
     name = primal + ' - ' + cut
     fltrd_cuts_df = fltrd_cuts_df.drop('Date', 1).drop('Primal', 1).drop('Description', 1)
     
     print 'code: ' + quandl_code
-    print 'name: ' + name
+    print 'name: Pork ' + name
     print 'description: |'
     print 'Daily total pounds, low price, high price and weighted average price'
     print 'from the USDA LM_PK602 report published by the USDA Agricultural Marketing Service (AMS).'
@@ -143,29 +160,6 @@ for cut in set(cuts_df['Description']):
     print ''
     print ''
     
-## format dataframe
-#loin_df = pd.melt(loin_df, id_vars = ['Date', 'Primal', 'Description'])
-#loin_df['Attribute'] = loin_df['Description'] + '::' + loin_df['variable']
-#loin_df = loin_df.drop('Primal', 1).drop('Description', 1)
-#loin_df = loin_df.pivot(index='Date', columns='Attribute', values='value')
-#
-#
-## Print quandl CSV metadata
-#print 'code: USDA_LM_PK602_LOIN'
-#print 'name: Loin data from the USDA LM_PK602 daily report'
-#print 'description: |'
-#print 'Daily total pounds, low price, high price and weighted average price'
-#print 'from the USDA LM_PK602 report published by the USDA Agricultural Marketing Service (AMS).'
-#print 'The data is published in "wide" format, allowing each specific loin cut'
-#print 'to be listed.'
-#print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
-#print 'frequency: daily'
-#print 'private: true'
-#print '---'
-#
-## Print the actual data to stdout
-#loin_df.to_csv(sys.stdout)
-
     
     
 
