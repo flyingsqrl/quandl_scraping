@@ -148,7 +148,7 @@ print 'Daily pork cutout and primal values from the USDA LM_PK602 report publish
 print 'Agricultural Marketing Service (AMS).  ' + reference_text
 print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
 print 'frequency: daily'
-print 'private: true'
+print 'private: false'
 print '---'
 primal_df.to_csv(sys.stdout)
 print ''
@@ -164,7 +164,7 @@ print 'Daily pork volume (full loads and trim/process loads) from the USDA LM_PK
 print 'published by the USDA Agricultural Marketing Service (AMS).  ' + reference_text
 print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
 print 'frequency: daily'
-print 'private: true'
+print 'private: false'
 print '---'
 volume_df.to_csv(sys.stdout)
 print ''
@@ -217,7 +217,7 @@ for cut in set(cuts_df['Description']): # Iterate through the list of unique Des
     print 'This dataset covers ' + name + '.  ' + reference_text
     print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
     print 'frequency: daily'
-    print 'private: true'
+    print 'private: false'
     print '---'
     fltrd_cuts_df.to_csv(sys.stdout)
     print ''
