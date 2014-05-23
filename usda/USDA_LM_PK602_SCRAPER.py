@@ -9,11 +9,18 @@ from lxml import objectify
 import pandas as pd
 import sys
 import re
+import requests
 
-file_name = './data/LM_PK602_sample_lmr_ws.xml'
+url = 'http://mpr.datamart.ams.usda.gov/ws/report/v1/pork/LM_PK602?filter={"filters":[{"fieldName":"Report Date","operatorType":"GREATER","values":["03/31/2014"]}]}'
 
-with open(file_name) as f:
-    xml = f.read()
+r = requests.get(url)
+xml = r.text.encode('ascii', 'ignore')
+xml = xml.replace('null', '0')
+
+#file_name = './data/LM_PK602_full_lmr_ws.xml'
+#
+#with open(file_name) as f:
+#    xml = f.read()
     
 root = objectify.fromstring(xml)
 
