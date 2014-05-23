@@ -3,6 +3,30 @@
 Created on Sun May 18 00:04:55 2014
 
 @author: billcary
+
+Script Name: USDA_LM_PK602_SCRAPER
+
+Purpose:
+Retrieve daily USDA pork data from from the LM_PK602 report via the USDA LMR
+web service for upload to Quandl.com.  This script is designed to access the LMR
+web service and pull data for the previous five days.  The script pulls data for
+volume, cutout/primal values and data for each individual cut of pork tracked by
+USDA.
+
+Approach:
+Access LMR web service and retrieve XML output.  Use lxml library to parse output.
+Output for each section of the report is written to python lists, which are then
+converted to pandas dataframes for further manipulation.  From the dataframes, write
+the data to the screen (along with metadata) in csv format for consumption by quandl.com.
+
+Author: Bill Cary
+
+History:
+
+Date            Author      Purpose
+-----           -------     -----------
+05/23/2014      Bill Cary   Initial development/release
+
 """
 
 from lxml import objectify
@@ -10,8 +34,20 @@ import pandas as pd
 import sys
 import re
 import requests
+import datetime as dt
 
-url = 'http://mpr.datamart.ams.usda.gov/ws/report/v1/pork/LM_PK602?filter={"filters":[{"fieldName":"Report Date","operatorType":"GREATER","values":["03/31/2014"]}]}'
+# Calculate the date to insert as the date parameter for USDA's LMR web service
+# Go back five days into the past just to pick up any potential revisions USDA may
+# have made to the date.  Quandl will replace any duplicate date with the new values
+# at the time of upload, so there is no worry of introducing duplicate records.
+# Note that the date goes back 6 days; because the web service parameter is
+# "GREATER" and not ">=," we are actually only pulling the previous five days
+# of data.
+date = (dt.date.today() - dt.timedelta(6)).strftime("%m/%d/%Y")
+
+# Build the querystring for the USDA LMR webservice
+url = 'http://mpr.datamart.ams.usda.gov/ws/report/v1/pork/LM_PK602?filter={"filters":[{"fieldName":"Report Date",' \
+    '"operatorType":"GREATER","values":["' + date + '"]}]}'
 
 r = requests.get(url)
 xml = r.text.encode('ascii', 'ignore') # Convert requests.get() response from unicode to ascii in prep for lxml parsing
@@ -84,6 +120,12 @@ primal_headings = ['Date', 'Carcass Value', 'Loin Value', 'Butt Value', 'Picnic 
 volume_headings = ['Date', 'Total Loads', 'Trim/Process Loads']
 cuts_headings = ['Date', 'Primal', 'Description', 'LBS', '$ Low', '$ High', '$ WgtAvg']
 
+# Reference information to be included in the dataset descriptions for the benefit of
+# quandl users
+reference_text = 'Historical figures from USDA can be verified using the LMR datamart located ' \
+    'at http://mpr.datamart.ams.usda.gov.'
+
+
 # primal_df holds the daily cutout and primal data            
 primal_df = pd.DataFrame(primal_cutout, columns = primal_headings)
 primal_df.index = primal_df['Date']
@@ -103,7 +145,7 @@ print 'code: USDA_LM_PK602_CUTOUT_PRIMAL'
 print 'name: Daily USDA pork cutout and primal values'
 print 'description: |'
 print 'Daily pork cutout and primal values from the USDA LM_PK602 report published by the USDA'
-print 'Agricultural Marketing Service (AMS).'
+print 'Agricultural Marketing Service (AMS).  ' + reference_text
 print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
 print 'frequency: daily'
 print 'private: true'
@@ -119,7 +161,7 @@ print 'code: USDA_LM_PK602_VOLUME'
 print 'name: Daily pork volume (full loads and trim/process loads)'
 print 'description: |'
 print 'Daily pork volume (full loads and trim/process loads) from the USDA LM_PK602 report'
-print 'published by the USDA Agricultural Marketing Service (AMS).'
+print 'published by the USDA Agricultural Marketing Service (AMS).  ' + reference_text
 print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
 print 'frequency: daily'
 print 'private: true'
@@ -172,7 +214,7 @@ for cut in set(cuts_df['Description']): # Iterate through the list of unique Des
     print 'description: |'
     print 'Daily total pounds, low price, high price and weighted average price'
     print 'from the USDA LM_PK602 report published by the USDA Agricultural Marketing Service (AMS).'
-    print 'This dataset covers ' + name + '.'
+    print 'This dataset covers ' + name + '.  ' + reference_text
     print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
     print 'frequency: daily'
     print 'private: true'
