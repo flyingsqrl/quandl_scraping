@@ -122,8 +122,8 @@ cuts_headings = ['Date', 'Primal', 'Description', 'LBS', '$ Low', '$ High', '$ W
 
 # Reference information to be included in the dataset descriptions for the benefit of
 # quandl users
-reference_text = 'Historical figures from USDA can be verified using the LMR datamart located ' \
-    'at http://mpr.datamart.ams.usda.gov.'
+reference_text = '  Historical figures from USDA can be verified using the LMR datamart located ' \
+    '\n  at http://mpr.datamart.ams.usda.gov.'
 
 
 # primal_df holds the daily cutout and primal data            
@@ -143,9 +143,9 @@ cuts_df.index = cuts_df['Date']
 # Print quandl dataset for CUTOUT AND PRIMAL VALUES
 print 'code: USDA_LM_PK602_CUTOUT_PRIMAL'
 print 'name: Daily USDA pork cutout and primal values'
-print 'description: |'
-print 'Daily pork cutout and primal values from the USDA LM_PK602 report published by the USDA'
-print 'Agricultural Marketing Service (AMS).  ' + reference_text
+print 'description: Daily pork cutout and primal values from the USDA LM_PK602\n' \
+    '  report published by the USDA Agricultural Marketing Service (AMS).\n' \
+    + reference_text
 print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
 print 'frequency: daily'
 print 'private: false'
@@ -159,9 +159,9 @@ print ''
 # Print quandl dataset for VOLUME
 print 'code: USDA_LM_PK602_VOLUME'
 print 'name: Daily pork volume (full loads and trim/process loads)'
-print 'description: |'
-print 'Daily pork volume (full loads and trim/process loads) from the USDA LM_PK602 report'
-print 'published by the USDA Agricultural Marketing Service (AMS).  ' + reference_text
+print 'description: Daily pork volume (full loads and trim/process loads) from the USDA LM_PK602\n' \
+    '  report published by the USDA Agricultural Marketing Service (AMS).\n' \
+    + reference_text
 print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
 print 'frequency: daily'
 print 'private: false'
@@ -192,7 +192,7 @@ for each pork cut in cuts_df:
 # These regex objects are used later to ensure the format of the description complies with the
 # requirements for a quandl csv file (upper case, alphanumeric)
 replace = re.compile('[ /]') # list of characters to be replaced in the pork cut description
-remove = re.compile('[,%#]') # list of characters to be removed from the pork cut description
+remove = re.compile('[,%#-&()!$+<>?/\'"{}.*@]') # list of characters to be removed from the pork cut description
 
 for cut in set(cuts_df['Description']): # Iterate through the list of unique Descriptions
     fltrd_cuts_df = cuts_df[cuts_df['Description'] == cut]  # Subset the data to just a specific cut
@@ -202,8 +202,9 @@ for cut in set(cuts_df['Description']): # Iterate through the list of unique Des
     # and remove any special characters using the regex module.  The specific regex objects were
     # compiled above before code entered the FOR loop.
     cut1 = replace.sub('_', cut) # replace certain characters with '_'
-    cut2 = remove.sub('', cut1).upper() # remove certain characters
-    quandl_code = 'USDA_LM_PK602_' + cut2
+    cut2 = remove.sub('', cut1).upper() # remove certain characters and convert to upper case
+    cut2 = cut2.translate(None, '-') # ensure '-' character is removed - don't know why regex didn't work...
+    quandl_code = 'USDA_LM_PK602_' + cut2 # build unique quandl code
     
     name = primal + ' - ' + cut
     fltrd_cuts_df = fltrd_cuts_df.drop('Date', 1).drop('Primal', 1).drop('Description', 1)
@@ -211,10 +212,10 @@ for cut in set(cuts_df['Description']): # Iterate through the list of unique Des
     # Print quandl metadata
     print 'code: ' + quandl_code
     print 'name: Pork ' + name
-    print 'description: |'
-    print 'Daily total pounds, low price, high price and weighted average price'
-    print 'from the USDA LM_PK602 report published by the USDA Agricultural Marketing Service (AMS).'
-    print 'This dataset covers ' + name + '.  ' + reference_text
+    print 'description: Daily total pounds, low price, high price and weighted average price ' \
+    '\n  from the USDA LM_PK602 report published by the USDA Agricultural Marketing Service ' \
+    '\n  (AMS). This dataset covers ' + name + '.\n' \
+     + reference_text
     print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
     print 'frequency: daily'
     print 'private: false'
