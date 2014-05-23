@@ -14,17 +14,12 @@ import requests
 url = 'http://mpr.datamart.ams.usda.gov/ws/report/v1/pork/LM_PK602?filter={"filters":[{"fieldName":"Report Date","operatorType":"GREATER","values":["03/31/2014"]}]}'
 
 r = requests.get(url)
-xml = r.text.encode('ascii', 'ignore')
-xml = xml.replace('null', '0')
-
-#file_name = './data/LM_PK602_full_lmr_ws.xml'
-#
-#with open(file_name) as f:
-#    xml = f.read()
+xml = r.text.encode('ascii', 'ignore') # Convert requests.get() response from unicode to ascii in prep for lxml parsing
+xml = xml.replace('null', '0') # Replace null quantities with zeros
     
-root = objectify.fromstring(xml)
+root = objectify.fromstring(xml) # Prepare the XML tree for parsing
 
-desired_aggregate_figures = ['Cutout and Primal Values', 'Current Volume']
+# List of categories of pork cuts for use later in routine
 pork_cuts= ['Loin Cuts', 'Butt Cuts', 'Picnic Cuts', 'Ham Cuts', 'Belly Cuts', \
     'Sparerib Cuts', 'Jowl Cuts', 'Trim Cuts', 'Variety Cuts', \
     'Added Ingredient Cuts']
@@ -81,16 +76,20 @@ for report_date in root.report.iterchildren(): #processing must be repeated for 
                 item.attrib['weighted_average']])
 
 '''
-pandas import and manipulation
+Each of the three sections of the report (primal/cutout, volume, indivudual pork cuts)
+are placed into pandas dataframes to allow easy manipulation into the format required of
+a quandl csv file.
 '''
 primal_headings = ['Date', 'Carcass Value', 'Loin Value', 'Butt Value', 'Picnic Value', 'Rib Value', 'Ham Value', 'Belly Value']
 volume_headings = ['Date', 'Total Loads', 'Trim/Process Loads']
 cuts_headings = ['Date', 'Primal', 'Description', 'LBS', '$ Low', '$ High', '$ WgtAvg']
-            
+
+# primal_df holds the daily cutout and primal data            
 primal_df = pd.DataFrame(primal_cutout, columns = primal_headings)
 primal_df.index = primal_df['Date']
 primal_df.drop(['Date'],inplace=True,axis=1) 
 
+# volume_df holds the daily shipment volume information
 volume_df = pd.DataFrame(loads, columns = volume_headings)
 volume_df.index = volume_df['Date']
 volume_df.drop(['Date'],inplace=True,axis=1) 
@@ -98,9 +97,10 @@ volume_df.drop(['Date'],inplace=True,axis=1)
 cuts_df = pd.DataFrame(cuts, columns = cuts_headings)
 cuts_df.index = cuts_df['Date']
 
-# Print quandl dataset for cutout and primal values
+#----------------------------------------------------------------------------------------------
+# Print quandl dataset for CUTOUT AND PRIMAL VALUES
 print 'code: USDA_LM_PK602_CUTOUT_PRIMAL'
-print 'name: Pork cutout and primal values'
+print 'name: Daily USDA pork cutout and primal values'
 print 'description: |'
 print 'Daily pork cutout and primal values from the USDA LM_PK602 report published by the USDA'
 print 'Agricultural Marketing Service (AMS).'
@@ -111,10 +111,12 @@ print '---'
 primal_df.to_csv(sys.stdout)
 print ''
 print ''
+#---------------------------------------------------------------------------------------------
 
-# Print quandl dataset for volume
+#---------------------------------------------------------------------------------------------
+# Print quandl dataset for VOLUME
 print 'code: USDA_LM_PK602_VOLUME'
-print 'name: Daily pork volume'
+print 'name: Daily pork volume (full loads and trim/process loads)'
 print 'description: |'
 print 'Daily pork volume (full loads and trim/process loads) from the USDA LM_PK602 report'
 print 'published by the USDA Agricultural Marketing Service (AMS).'
@@ -125,6 +127,7 @@ print '---'
 volume_df.to_csv(sys.stdout)
 print ''
 print ''
+#---------------------------------------------------------------------------------------------
 
 
 # Print quandl datasets for each pork cut
@@ -141,18 +144,29 @@ for each pork cut in cuts_df:
     print dataframe to stdout
     print two blank lines in preparation for the next code
     repeat for the next cut
-
 '''
 
-for cut in set(cuts_df['Description']):
-    fltrd_cuts_df = cuts_df[cuts_df['Description'] == cut]
+# Compile regular expressions for use inside for loop below. Don't want to compile each time loop runs
+# These regex objects are used later to ensure the format of the description complies with the
+# requirements for a quandl csv file (upper case, alphanumeric)
+replace = re.compile('[ /]') # list of characters to be replaced in the pork cut description
+remove = re.compile('[,%#]') # list of characters to be removed from the pork cut description
+
+for cut in set(cuts_df['Description']): # Iterate through the list of unique Descriptions
+    fltrd_cuts_df = cuts_df[cuts_df['Description'] == cut]  # Subset the data to just a specific cut
     primal = ''.join(set(fltrd_cuts_df['Primal']))
-    cut1 = re.sub('[ /]', '_', cut) # replace certain characters with '_'
-    cut2 = re.sub('[,%#]', '', cut1).upper() # remove certain characters
+    
+    # quandl code has to be uppercase, alphanumeric with no spaces. So need to convert to upper
+    # and remove any special characters using the regex module.  The specific regex objects were
+    # compiled above before code entered the FOR loop.
+    cut1 = replace.sub('_', cut) # replace certain characters with '_'
+    cut2 = remove.sub('', cut1).upper() # remove certain characters
     quandl_code = 'USDA_LM_PK602_' + cut2
+    
     name = primal + ' - ' + cut
     fltrd_cuts_df = fltrd_cuts_df.drop('Date', 1).drop('Primal', 1).drop('Description', 1)
     
+    # Print quandl metadata
     print 'code: ' + quandl_code
     print 'name: Pork ' + name
     print 'description: |'
