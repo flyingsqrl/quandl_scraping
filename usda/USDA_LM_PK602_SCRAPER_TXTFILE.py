@@ -150,7 +150,7 @@ trim_start_index = cuts_df[cuts_df[0] == 'Trim\r\n'].index.tolist()
 variety_start_index = cuts_df[cuts_df[0] == 'Variety\r\n'].index.tolist()
 ai_start_index = cuts_df[cuts_df[0] == 'AI (Added Ingreds)\r\n'].index.tolist()
 
-
+# Get indices for end of each section (just back up two lines from the start of the next section)
 loin_end_index = butt_start_index[0].astype(int) - 2
 butt_end_index = picnic_start_index[0].astype(int) - 2
 picnic_end_index = sparerib_start_index[0].astype(int) - 2
@@ -164,29 +164,6 @@ ai_end_index = cuts_df[cuts_df[0] == 'Items that have no entries indicate there 
     .index.tolist()[0].astype(int) - 2
 
 
-
-# primal_df holds the daily cutout and primal data            
-primal_df = pd.DataFrame(primal_cutout)
-primal_df = primal_df.T
-primal_df.columns = primal_headings
-primal_df.index = primal_df['Date']
-primal_df.drop(['Date'],inplace=True,axis=1)
-
-
-# Print quandl dataset for CUTOUT AND PRIMAL VALUES
-print 'code: USDA_LM_PK602_CUTOUT_PRIMAL'
-print 'name: Daily USDA pork cutout and primal values'
-print 'description: Daily pork cutout and primal values from the USDA LM_PK602\n' \
-    '  report published by the USDA Agricultural Marketing Service (AMS).\n' \
-    + reference_text
-print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
-print 'frequency: daily'
-print 'private: false'
-print '---'
-primal_df.to_csv(sys.stdout)
-print ''
-print ''
-#---------------------------------------------------------------------------------------------
 
 #'''
 #Iterate through the XML and extract the relevant data, placing it
