@@ -135,20 +135,20 @@ print ''
 print ''
 #---------------------------------------------------------------------------------------------
 
-#-------------------------Create the PORK CUTS dataset-------------------------------------------------------------
+#-------------------------Create the PORK CUTS dataset----------------------------------------
 cuts_df = pd.DataFrame(url_lines) # Put entire dataset into dataframe
 
 # Get indices for start of each section
-loin_start_index = cuts_df[cuts_df[0] == 'Loin\r\n'].index.tolist()
-butt_start_index = cuts_df[cuts_df[0] == 'Butt\r\n'].index.tolist()
-picnic_start_index = cuts_df[cuts_df[0] == 'Picnic\r\n'].index.tolist()
-sparerib_start_index = cuts_df[cuts_df[0] == 'Sparerib\r\n'].index.tolist()
-ham_start_index = cuts_df[cuts_df[0] == 'Ham\r\n'].index.tolist()
-belly_start_index = cuts_df[cuts_df[0] == 'Belly\r\n'].index.tolist()
-jowl_start_index = cuts_df[cuts_df[0] == 'Jowl\r\n'].index.tolist()
-trim_start_index = cuts_df[cuts_df[0] == 'Trim\r\n'].index.tolist()
-variety_start_index = cuts_df[cuts_df[0] == 'Variety\r\n'].index.tolist()
-ai_start_index = cuts_df[cuts_df[0] == 'AI (Added Ingreds)\r\n'].index.tolist()
+loin_start_index = cuts_df[cuts_df[0] == 'Loin\r\n'].index.tolist()[0].astype(int)
+butt_start_index = cuts_df[cuts_df[0] == 'Butt\r\n'].index.tolist()[0].astype(int)
+picnic_start_index = cuts_df[cuts_df[0] == 'Picnic\r\n'].index.tolist()[0].astype(int)
+sparerib_start_index = cuts_df[cuts_df[0] == 'Sparerib\r\n'].index.tolist()[0].astype(int)
+ham_start_index = cuts_df[cuts_df[0] == 'Ham\r\n'].index.tolist()[0].astype(int)
+belly_start_index = cuts_df[cuts_df[0] == 'Belly\r\n'].index.tolist()[0].astype(int)
+jowl_start_index = cuts_df[cuts_df[0] == 'Jowl\r\n'].index.tolist()[0].astype(int)
+trim_start_index = cuts_df[cuts_df[0] == 'Trim\r\n'].index.tolist()[0].astype(int)
+variety_start_index = cuts_df[cuts_df[0] == 'Variety\r\n'].index.tolist()[0].astype(int)
+ai_start_index = cuts_df[cuts_df[0] == 'AI (Added Ingreds)\r\n'].index.tolist()[0].astype(int)
 
 # Get indices for end of each section (just back up two lines from the start of the next section)
 loin_end_index = butt_start_index[0].astype(int) - 2
@@ -163,7 +163,8 @@ variety_end_index = ai_start_index[0].astype(int) - 2
 ai_end_index = cuts_df[cuts_df[0] == 'Items that have no entries indicate there were trades but not reportable\r\n'] \
     .index.tolist()[0].astype(int) - 2
 
-
+# From url_lines, extract the lines relevant to each pork cut in a separate list
+loin_lines = url_lines[loin_start_index:loin_end_index]
 
 #'''
 #Iterate through the XML and extract the relevant data, placing it
@@ -213,45 +214,12 @@ ai_end_index = cuts_df[cuts_df[0] == 'Items that have no entries indicate there 
 #
 # 
 #
-## volume_df holds the daily shipment volume information
-#volume_df = pd.DataFrame(loads, columns = volume_headings)
-#volume_df.index = volume_df['Date']
-#volume_df.drop(['Date'],inplace=True,axis=1) 
-#
 #cuts_df = pd.DataFrame(cuts, columns = cuts_headings)
 #cuts_df.index = cuts_df['Date']
 #
-##----------------------------------------------------------------------------------------------
-## Print quandl dataset for CUTOUT AND PRIMAL VALUES
-#print 'code: USDA_LM_PK602_CUTOUT_PRIMAL'
-#print 'name: Daily USDA pork cutout and primal values'
-#print 'description: Daily pork cutout and primal values from the USDA LM_PK602\n' \
-#    '  report published by the USDA Agricultural Marketing Service (AMS).\n' \
-#    + reference_text
-#print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
-#print 'frequency: daily'
-#print 'private: false'
-#print '---'
-#primal_df.to_csv(sys.stdout)
-#print ''
-#print ''
-##---------------------------------------------------------------------------------------------
+
 #
-##---------------------------------------------------------------------------------------------
-## Print quandl dataset for VOLUME
-#print 'code: USDA_LM_PK602_VOLUME'
-#print 'name: Daily pork volume (full loads and trim/process loads)'
-#print 'description: Daily pork volume (full loads and trim/process loads) from the USDA LM_PK602\n' \
-#    '  report published by the USDA Agricultural Marketing Service (AMS).\n' \
-#    + reference_text
-#print 'reference_url: http://www.ams.usda.gov/mnreports/lm_pk602.txt'
-#print 'frequency: daily'
-#print 'private: false'
-#print '---'
-#volume_df.to_csv(sys.stdout)
-#print ''
-#print ''
-##---------------------------------------------------------------------------------------------
+
 #
 #
 ## Print quandl datasets for each pork cut
