@@ -151,20 +151,33 @@ variety_start_index = cuts_df[cuts_df[0] == 'Variety\r\n'].index.tolist()[0].ast
 ai_start_index = cuts_df[cuts_df[0] == 'AI (Added Ingreds)\r\n'].index.tolist()[0].astype(int)
 
 # Get indices for end of each section (just back up two lines from the start of the next section)
-loin_end_index = butt_start_index[0].astype(int) - 2
-butt_end_index = picnic_start_index[0].astype(int) - 2
-picnic_end_index = sparerib_start_index[0].astype(int) - 2
-sparerib_end_index = ham_start_index[0].astype(int) - 2
-ham_end_index = belly_start_index[0].astype(int) - 2
-belly_end_index = jowl_start_index[0].astype(int) - 2
-jowl_end_index = trim_start_index[0].astype(int) - 2
-trim_end_index = variety_start_index[0].astype(int) - 2
-variety_end_index = ai_start_index[0].astype(int) - 2
+loin_end_index = butt_start_index - 2
+butt_end_index = picnic_start_index - 2
+picnic_end_index = sparerib_start_index - 2
+sparerib_end_index = ham_start_index - 2
+ham_end_index = belly_start_index - 2
+belly_end_index = jowl_start_index - 2
+jowl_end_index = trim_start_index - 2
+trim_end_index = variety_start_index - 2
+variety_end_index = ai_start_index - 2
 ai_end_index = cuts_df[cuts_df[0] == 'Items that have no entries indicate there were trades but not reportable\r\n'] \
     .index.tolist()[0].astype(int) - 2
 
 # From url_lines, extract the lines relevant to each pork cut in a separate list
-loin_lines = url_lines[loin_start_index:loin_end_index]
+loin_lines = url_lines[loin_start_index + 2:loin_end_index + 1]
+butt_lines = url_lines[butt_start_index + 2:butt_end_index + 1]
+picnic_lines = url_lines[picnic_start_index + 2:picnic_end_index + 1]
+sparerib_lines = url_lines[sparerib_start_index + 2:sparerib_end_index + 1]
+ham_lines = url_lines[ham_start_index + 2:ham_end_index + 1]
+belly_lines = url_lines[belly_start_index + 2:belly_end_index + 1]
+jowl_lines = url_lines[jowl_start_index + 2:jowl_end_index + 1]
+trim_lines = url_lines[trim_start_index + 2:trim_end_index + 1]
+variety_lines = url_lines[variety_start_index + 2:variety_end_index + 1]
+ai_lines = url_lines[ai_start_index + 2:ai_end_index + 1]
+
+all_lines = [loin_lines, butt_lines, picnic_lines, sparerib_lines, ham_lines, belly_lines, jowl_lines, \
+    trim_lines, variety_lines, ai_lines]
+
 
 #'''
 #Iterate through the XML and extract the relevant data, placing it
