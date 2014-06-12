@@ -31,14 +31,14 @@ import datetime
 import sys
 
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") # holds the date in YYYY-MM-DD format
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/aj_py018.txt"
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') # holds the date in YYYY-MM-DD format
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/aj_py018.txt'
 site_contents=urllib2.urlopen(url).read()
 
-decimal=site_contents.rfind(".", 0, site_contents.find("based"))         # find the decimal point in the price
-space_before=site_contents.rfind(" ", 0, decimal)                           # find the space before the price
-space_after=site_contents.find(" ", decimal)                                # find the space after the price
+decimal=site_contents.rfind('.', 0, site_contents.find('based'))            # find the decimal point in the price
+space_before=site_contents.rfind(' ', 0, decimal)                           # find the space before the price
+space_after=site_contents.find(' ', decimal)                                # find the space after the price
 dock_quoted_price=float(site_contents[space_before:space_after].strip())    # store the quoted price as a float and remove extra spaces around it
 
 headings=['Date', 'Quoted Price (cents)']

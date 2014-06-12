@@ -38,20 +38,20 @@ import sys
 import re
 
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") #holds the date in YYYY-MM-DD format
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/gx_gr117.txt"
-site_contents=urllib2.urlopen(url).read()
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') #holds the date in YYYY-MM-DD format
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/gx_gr117.txt'
+site_contents=urllib2.urlopen(url).read() 
 
-labels=["Crude Soybean Oil", "48% Soybean Meal R", "48% Soybean Meal T", "Soybean Hulls-bulk"] #names of each soybean product
+labels=['Crude Soybean Oil', '48% Soybean Meal R', '48% Soybean Meal T', 'Soybean Hulls-bulk'] #names of each soybean product
 
 x=0
 # Loops though the relevant section of the website and finds the offer data
 # for each soybean product in "labels"
 while x<len(labels):
     first_index=site_contents.find(labels[x])
-    end_index=site_contents.find(" ", site_contents.find("-", first_index+len(labels[x])))
-    line=(site_contents[first_index+len(labels[x]):end_index]).strip().split("-") # splits the data so that the minimum offer price and maximum
+    end_index=site_contents.find(' ', site_contents.find('-', first_index+len(labels[x])))
+    line=(site_contents[first_index+len(labels[x]):end_index]).strip().split('-') # splits the data so that the minimum offer price and maximum
                                                                                   # offer price are stored in different sections in "line"
     headings = [ 'Date', 'Low Offer Price', 'High Offer Price']
     data={'Date': [date], 'Low Offer Price': [line[0]], 'High Offer Price': [line[1]]}

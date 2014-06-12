@@ -4,6 +4,7 @@ Created on Fri Jun 06 10:04:17 2014
 
 @author: nataliecmoore
 
+
 Script Name: USDA_LM_CT150_SCRAPER
 
 Purpose:
@@ -28,7 +29,6 @@ Date            Author          Purpose
 
 """
 
-
 from pyparsing import *
 import urllib2
 import pytz
@@ -37,22 +37,22 @@ import re
 import datetime
 import sys
 
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/lm_ct150.txt"
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/lm_ct150.txt'
 site_contents=urllib2.urlopen(url).read()
 
-date_begin=site_contents.find(", ", site_contents.find("Week Ending"))
-date_end=site_contents.find("\r\n", date_begin)
-first_break=site_contents.find("/", date_begin)
-second_break=site_contents.find("/", first_break+1)
+date_begin=site_contents.find(', ', site_contents.find('Week Ending'))
+date_end=site_contents.find('\r\n', date_begin)
+first_break=site_contents.find('/', date_begin)
+second_break=site_contents.find('/', first_break+1)
 month=site_contents[date_begin+1:first_break].strip()
 day=site_contents[first_break+1:second_break].strip()
 year=site_contents[second_break+1:date_end].strip()
-date=datetime.date(int(year), int(month), int(day)).strftime("%Y-%m-%d") # store date in YYYY-mm-dd format
+date=datetime.date(int(year), int(month), int(day)).strftime('%Y-%m-%d') # store date in YYYY-mm-dd format
 
-basis_labels=["LIVE FOB BASIS", "DRESSED DELIVERED BASIS", "LIVE DELIVERED BASIS", "DRESSED FOB BASIS"]
-type_labels=["STEERS", "HEIFERS"]
-grade_labels=["Over 80% Choice", "65 - 80% Choice", "35 - 65% Choice", "0 - 35% Choice", "Total all grades"]
+basis_labels=['LIVE FOB BASIS', 'DRESSED DELIVERED BASIS', 'LIVE DELIVERED BASIS', 'DRESSED FOB BASIS']
+type_labels=['STEERS', 'HEIFERS']
+grade_labels=['Over 80% Choice', '65 - 80% Choice', '35 - 65% Choice', '0 - 35% Choice', 'Total all grades']
 # Loops through each basis type and uses the following loops to parse each line
 # and find the head count, weight range, price range, average weight, and average price
 # for each grade of beef
@@ -94,17 +94,17 @@ while x<len(basis_labels):
             name2 = remove.sub('', name1).upper() # remove certain characters and convert to upper case
             name2 = name2.translate(None, '-') # ensure '-' character is removed
             if x==0: # if data is for Live FOB Basis
-                basis="LFB"
-                basis_name="Live FOB"
+                basis='LFB'
+                basis_name='Live FOB'
             if x==1: # if data is for Dressed Delivered Basis
-                basis="DDB"
-                basis_name="Dressed Delivered"
+                basis='DDB'
+                basis_name='Dressed Delivered'
             if x==2: # if data is for Live FOB Basis
-                basis="LDB"
-                basis_name="Live Delivered"
+                basis='LDB'
+                basis_name='Live Delivered'
             if x==3: # if data is for Dressed Delivered Basis
-                basis="DFB"
-                basis_name="Dressed FOB"
+                basis='DFB'
+                basis_name='Dressed FOB'
             quandl_code = 'USDA_LM_CT150_' +basis+'_'+type_labels[y]+'_'+name2 # build unique quandl code
             reference_text = '  Historical figures from USDA can be verified using the LMR datamart located ' \
             '\n  at http://mpr.datamart.ams.usda.gov.\n' \
@@ -127,7 +127,7 @@ while x<len(basis_labels):
     x=x+1
     
     
-labels=["Live FOB Steer", "Live FOB Heifer", "Dressed Del Steer", "Dressed Del Heifer"]
+labels=['Live FOB Steer', 'Live FOB Heifer', 'Dressed Del Steer', 'Dressed Del Heifer']
 # Loops through each label in labels and uses pyparsing to find the weekly
 # accumulated head count, average weight, and average price
 x=0

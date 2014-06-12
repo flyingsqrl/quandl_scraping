@@ -32,11 +32,11 @@ import datetime
 import pytz
 import calendar
 
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/nw_py021.txt"
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/nw_py021.txt'
 site_contents=urllib2.urlopen(url).read()
 
-begin_index=site_contents.find('  ', site_contents.find("Week ending")) # beginning index of the date
+begin_index=site_contents.find('  ', site_contents.find('Week ending')) # beginning index of the date
 end_index=site_contents.find('\r\n', begin_index) # ending index of the date
 hyphen=site_contents.find('-', begin_index) # find index of the hyphen separating day and month
 day=site_contents[begin_index:hyphen].strip() # store the day 
@@ -69,7 +69,7 @@ while x<len(labels):
     print 'name: Weekly National Turkey Slaughter- '+labels[x].title()+'\r'
     reference_text = '  Historical figures from USDA can be verified using the LMR datamart located ' \
     '\n  at http://mpr.datamart.ams.usda.gov.\n' 
-    print 'description:  Weekly national turkey slaugher data' \
+    print 'description:  Weekly national turkey slaughter data' \
     '\n  from the USDA NW_PY021 report published by the USDA Agricultural Marketing Service ' \
     '\n  (AMS). This dataset covers the ' + labels[x]+ '.\n'\
     + reference_text 

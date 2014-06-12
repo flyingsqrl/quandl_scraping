@@ -33,15 +33,15 @@ import datetime
 import sys
 import re
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") # holds the date in YYYY-MM-DD format
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/aj_py047.txt"
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') # holds the date in YYYY-MM-DD format
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/aj_py047.txt'
 site_contents=urllib2.urlopen(url).read()
 
 # names of each cut in the report
-labels=["BREAST - B/S", "TENDERLOINS", "BREAST - WITH RIBS", "BREAST - LINE RUN", "LEGS", "LEG QUARTERS (BULK)",\
-        "DRUMSTICKS", "THIGHS", "B/S THIGHS", "WINGS (WHOLE)", "BACKS AND NECKS (STRIPPED)", "LIVERS (5 POUND TUBS)",\
-        "GIZZARDS (HEARTS)"]
+labels=['BREAST - B/S', 'TENDERLOINS', 'BREAST - WITH RIBS', 'BREAST - LINE RUN', 'LEGS', 'LEG QUARTERS (BULK)',\
+        'DRUMSTICKS', 'THIGHS', 'B/S THIGHS', 'WINGS (WHOLE)', 'BACKS AND NECKS (STRIPPED)', 'LIVERS (5 POUND TUBS)',\
+        'GIZZARDS (HEARTS)']
 
 ending_index=0 # initializes ending_index to 0 to be used in following loop       
 # Loops through each cut in labels and uses pyparsing to find the weighted average

@@ -31,15 +31,15 @@ import pandas as pd
 import datetime
 import sys
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") #holds the date in YYYY-MM-DD format
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/lm_hg206.txt"
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') #holds the date in YYYY-MM-DD format
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/lm_hg206.txt'
 site_contents=urllib2.urlopen(url).read()
 
-starting_index=site_contents.find(':', site_contents.find("Barrows & Gilts")) # stores index of colon before head count
+starting_index=site_contents.find(':', site_contents.find('Barrows & Gilts')) # stores index of colon before head count
 end_head=site_contents.find('\r\n', starting_index) # stores index of the end of the head count
 head=float(site_contents[starting_index+1:end_head].strip().replace(',','')) # store the head count, replace commas, and convert to a float
-price_start=site_contents.find('$', site_contents.find("Base Price Range")) # store index of beginning of price range
+price_start=site_contents.find('$', site_contents.find('Base Price Range')) # store index of beginning of price range
 hyphen=site_contents.find('-', price_start) # store index of hyphen separating min and max price
 low_price=float(site_contents[price_start+1:hyphen].strip()) # store min price
 price_end=site_contents.find(',', hyphen) # store index of comma that marks end of price range

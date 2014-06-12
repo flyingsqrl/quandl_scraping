@@ -32,12 +32,12 @@ import datetime
 import sys
 import re
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") # holds the date in YYYY-MM-DD format
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/ra_gr110.txt"
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') # holds the date in YYYY-MM-DD format
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/ra_gr110.txt'
 site_contents=urllib2.urlopen(url).read()
 
-grains=["US 2 Yellow Corn", "US 1 Yellow Soybeans", "US 2 Soft Red Winter Wheat"]
+grains=['US 2 Yellow Corn', 'US 1 Yellow Soybeans', 'US 2 Soft Red Winter Wheat']
 
 
 # Loops through each grain in "grains" and finds the elevator price data. 
@@ -45,12 +45,12 @@ grains=["US 2 Yellow Corn", "US 1 Yellow Soybeans", "US 2 Soft Red Winter Wheat"
 x=0
 while x<len(grains):
     begin=site_contents.find(grains[x]) # the beginning of each section is where each grain name is found                                         
-    end=site_contents.rfind("at", begin, site_contents.find("elevators.", begin)) #the end of each section is right before the phrase "at the elevators"
-    hyphen=site_contents.rfind("-", begin, end) # hyphen separates the minimum and maximum price
-    space_before=site_contents.rfind(" ", begin, hyphen) #index of space before minimum price
-    space_after=site_contents.find(" ", hyphen) # index of space after maximum price
-    minimum=site_contents[space_before:hyphen].replace("\r\n", "").strip() 
-    maximum=site_contents[hyphen+1:end].replace("\r\n", "").strip()
+    end=site_contents.rfind('at', begin, site_contents.find('elevators.', begin)) #the end of each section is right before the phrase "at the elevators"
+    hyphen=site_contents.rfind('-', begin, end) # hyphen separates the minimum and maximum price
+    space_before=site_contents.rfind(' ', begin, hyphen) #index of space before minimum price
+    space_after=site_contents.find(' ', hyphen) # index of space after maximum price
+    minimum=site_contents[space_before:hyphen].replace('\r\n', '').strip() 
+    maximum=site_contents[hyphen+1:end].replace('\r\n', '').strip()
     headings=[ 'Date', 'Minimum Price', 'Maximum Price']
     replace = re.compile('[ /]') # list of characters to be replaced in the pork cut description
     remove = re.compile('[,%#-&()!$+<>?/\'"{}.*@]') # list of characters to be removed from the pork cut description
@@ -79,13 +79,13 @@ while x<len(grains):
     print '\n'
     x=x+1
 
-starting_index=site_contents.find("Fayetteville", site_contents.find("Soybean Processors")) # starting index of section of website to gather data from
-ending_index=site_contents.find("Source", starting_index) # ending index of section of website to gather data from
+starting_index=site_contents.find('Fayetteville', site_contents.find('Soybean Processors')) # starting index of section of website to gather data from
+ending_index=site_contents.find('Source', starting_index) # ending index of section of website to gather data from
 
-city_names=["FAYETTEVILLE", "RALEIGH"]                                  # names of two cities
+city_names=['FAYETTEVILLE', 'RALEIGH']                                  # names of two cities
 city_list=[]                                                            # will hold data for each city
 line=Word(alphas)+ZeroOrMore(Word(printables))                          # line starts with a city name and is either followed by numbers or no data
-break_point=site_contents.find("\r\n", starting_index)                  
+break_point=site_contents.find('\r\n', starting_index)                  
 fayetteville=line.parseString(site_contents[starting_index:break_point])# fayetteville data is from the city name to the end of the line 
 raleigh=line.parseString(site_contents[break_point:ending_index])       # raleigh data is from the end of the previous line to the end of the website section
 fayetteville.insert(1, 0)                                               # insert 0 after city name in case there is no data for that city

@@ -35,10 +35,10 @@ import re
 import datetime
 import sys
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") #holds the date in YYYY-MM-DD format
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') #holds the date in YYYY-MM-DD format
 
 # stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/lm_xb401.txt"
+url='http://www.ams.usda.gov/mnreports/lm_xb401.txt'
 site_contents=urllib2.urlopen(url).read()
 
 names=[]                                                   # holds name of each beef grade
@@ -47,10 +47,10 @@ min_price=[]                                               # holds minimum price
 max_price=[]                                               # holds maximum price
 weighted_average=[]                                        # holds weighted_average
 lines=[]                                                   # holds each relevant line of data
-starting_index=site_contents.find("Fresh  90%")            # starting index of relevant website section
-ending_index=site_contents.find("Frozen 85%")              # ending index of website section
-break_point=site_contents.find("\r\n", starting_index)     # ending index of first line
-break_point2=site_contents.find("\r\n", break_point+1)     # ending index of second line
+starting_index=site_contents.find('Fresh  90%')            # starting index of relevant website section
+ending_index=site_contents.find('Frozen 85%')              # ending index of website section
+break_point=site_contents.find('\r\n', starting_index)     # ending index of first line
+break_point2=site_contents.find('\r\n', break_point+1)     # ending index of second line
 lines.append(site_contents[starting_index:break_point])    # store website data from starting point to end of first line
 lines.append(site_contents[break_point+4:break_point2])    # store website data from end of first line (after 4 char new line string) to end of second line
 lines.append(site_contents[break_point2+4:ending_index-4]) # store website data from end of second line (after new line) to ending index (before new line)
@@ -74,12 +74,12 @@ x=0
 while x<len(parsed):
     if len(parsed[x])!=2:
         names.append(" ".join(parsed[x][0:2]))                 # add first two strings in parsed list to names list
-        weight.append(float(parsed[x][3].replace(",", "")))    # store weight in weight list, remove commas and convert to float
-        min_price.append(float(parsed[x][4].replace("$", ""))) # store the minimum price in min_price, remove $ and convert to float
-        max_price.append(float(parsed[x][5].replace("$", ""))) # store the maximum price in max_price, remove $ and convert to float
-        weighted_average.append(float(parsed[x][6].replace("$", ""))) # store weighted average into weighted_average, remove $ and convert to float
+        weight.append(float(parsed[x][3].replace(',', '')))    # store weight in weight list, remove commas and convert to float
+        min_price.append(float(parsed[x][4].replace('$', ''))) # store the minimum price in min_price, remove $ and convert to float
+        max_price.append(float(parsed[x][5].replace('$', ''))) # store the maximum price in max_price, remove $ and convert to float
+        weighted_average.append(float(parsed[x][6].replace('$', ''))) # store weighted average into weighted_average, remove $ and convert to float
     else:
-        names.append(" ".join(parsed[x][0:]))
+        names.append(' '.join(parsed[x][0:]))
         weight.append(0)
         min_price.append(0)
         max_price.append(0)

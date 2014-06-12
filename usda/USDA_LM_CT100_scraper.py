@@ -38,15 +38,15 @@ import re
 import datetime
 import sys
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") #holds the date in YYYY-MM-DD format
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') #holds the date in YYYY-MM-DD format
 
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/lm_ct100.txt"
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/lm_ct100.txt'
 site_contents=urllib2.urlopen(url).read()
 
-basis_labels=["LIVE FOB BASIS", "DRESSED DELIVERED BASIS"]
-type_labels=["STEERS", "HEIFERS"]
-choice_labels=["Over 80% Choice", "65 - 80% Choice", "35 - 65% Choice", "0 - 35% Choice", "Total all grades"]
+basis_labels=['LIVE FOB BASIS', 'DRESSED DELIVERED BASIS']
+type_labels=['STEERS', 'HEIFERS']
+choice_labels=['Over 80% Choice', '65 - 80% Choice', '35 - 65% Choice', '0 - 35% Choice', 'Total all grades']
 # Loops through each basis type and uses the following loops to parse each line
 # and find the head count, weight range, price range, average weight, and average price
 # for each grade of beef
@@ -77,7 +77,7 @@ while x<len(basis_labels):
             else: # when list isn't empty
                 line=[g.split('-') for g in line] # split values with hyphens into individual data entries
                 headings = [ 'Date', 'Head Count', 'Weight Low', 'Weight High','$ Low', '$ High', 'Avg Weight', 'Avg Price']
-                data={'Date': [date], 'Head Count': line[1][0], 'Weight Low': line[2][0], 'Weight High': line[2][1], '$ Low': line[3][0],'$ High': line[3][1], 'Avg Weight': line[4][0], 'Avg Price': line[5][0]}
+                data={'Date': [date], 'Head Count': float(line[1][0].replace(',','')), 'Weight Low': line[2][0], 'Weight High': line[2][1], '$ Low': line[3][0],'$ High': line[3][1], 'Avg Weight': line[4][0], 'Avg Price': line[5][0]}
             data_df = pd.DataFrame(data, columns = headings)
             data_df.index = data_df['Date']
             data_df = data_df.drop('Date', 1)
@@ -87,11 +87,11 @@ while x<len(basis_labels):
             name2 = remove.sub('', name1).upper() # remove certain characters and convert to upper case
             name2 = name2.translate(None, '-') # ensure '-' character is removed
             if x==0: # if data is for Live FOB Basis
-                basis="LFB"
-                basis_name="Live FOB"
+                basis='LFB'
+                basis_name='Live FOB'
             if x==1: # if data is for Dressed Delivered Basis
-                basis="DDB"
-                basis_name="Dressed Delivered"
+                basis='DDB'
+                basis_name='Dressed Delivered'
             quandl_code = 'USDA_LM_CT100_' +basis+'_'+type_labels[y]+'_'+name2 # build unique quandl code
             reference_text = '  Historical figures from USDA can be verified using the LMR datamart located ' \
             '\n  at http://mpr.datamart.ams.usda.gov.\n' \
@@ -113,7 +113,7 @@ while x<len(basis_labels):
         y=y+1
     x=x+1
     
-labels=["Live    Steer", "Live    Heifer", "Dressed Steer", "Dressed Heifer"]
+labels=['Live    Steer', 'Live    Heifer', 'Dressed Steer', 'Dressed Heifer']
 # Loops through each label in labels and uses pyparsing to find the weekly
 # accumulated head count, average weight, and average price
 x=0

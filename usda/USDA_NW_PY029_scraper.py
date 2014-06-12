@@ -34,36 +34,38 @@ import sys
 import datetime
 import pytz
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") # holds the date in YYYY-MM-DD format
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') # holds the date in YYYY-MM-DD format
 # stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/nw_py029.txt"
+url='http://www.ams.usda.gov/mnreports/nw_py029.txt'
 site_contents=urllib2.urlopen(url).read()
 
-start=site_contents.find("(000)") # index of point in the domestic trading section before names of cuts begin
-ending_index=site_contents.find("\r\n", site_contents.find("\r\n", start+15)) # index of breakpoint before the name of the first cut
+start=site_contents.find('(000)') # index of point in the domestic trading section before names of cuts begin
+ending_index=site_contents.find('BREASTS, 4-8 LBS GRADE A', start)-2 # index of breakpoint before the name of the first cut
 lines=[] # list to later hold each line of the website data
 # Loops through the domestic trading section, getting the line of data from the name
 # of the cut to the volume value and splits into a list 
-while site_contents.find("EXPORT TRADING")!=ending_index+4:
-    starting_index=ending_index+4 # starting_index is 4 after ending_index (because it marks the '\r\n' index)
-    ending_index=site_contents.find("\r\n", starting_index) # ending_index becomes the beginning index of the next '\r\n'
-    line=site_contents[starting_index-2:ending_index] 
-    line=re.compile("\s\s+").split(line) # splits each line and creates a list with each data point
+while site_contents.find('EXPORT TRADING')!=ending_index+4:
+    starting_index=ending_index+2 # starting_index is 2 after ending_index (because it marks the '\r\n' index)
+    ending_index=site_contents.find('\r\n', starting_index+2) # ending_index becomes the beginning index of the next '\r\n'
+    line=site_contents[starting_index:ending_index] 
+    line=re.compile('\s\s+').split(line) # splits each line and creates a list with each data point
+    if len(line)!=2:    
+        line[3]=re.compile('\s').split(line[3])[0] # separate line[3] by the space    
     lines.append(line) # add line to list of all the lines
 # Loops through each line in lines and finds the weighted average and volume. Then
 # creates a table for each cut and formats for upload to quandl.
 x=0
 while x<len(lines):
-    if lines[x][0][len(lines[x][0])-1]=='/': # remove the 1/, 2/, 3/ 4/ from end of names if needed
-        name=lines[x][0][:(len(lines[x][0])-3)]
-    else:
-        name=lines[x][0]
     if len(lines[x])==2: # if no data, set weighted average and volume to 0
         weighted_average=0
         volume=0
     else: # if data, find weighted average and volume and convert to floats
         weighted_average=float(lines[x][2])
         volume=float(lines[x][3])
+    if  lines[x][0][len(lines[x][0])-1]=='/': # remove the 1/, 2/, 3/ 4/ from end of names if needed
+        name=lines[x][0][:(len(lines[x][0])-3)]
+    else:
+        name=lines[x][0]
     headings=['Date', 'Weighted Average', 'Volume (000)']
     data={'Date': [date], 'Weighted Average': [weighted_average], 'Volume (000)': [volume]}
     data_df = pd.DataFrame(data, columns = headings)

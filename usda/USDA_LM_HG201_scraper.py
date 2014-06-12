@@ -36,21 +36,21 @@ import sys
 import re
 
 date=datetime.datetime.now(pytz.timezone('US/Eastern')) # holds the date in YYYY-MM-DD format
-date=(date-datetime.timedelta(hours=24)).strftime("%Y-%m-%d") # find the previous day's date (because report is prior day)
+date=(date-datetime.timedelta(hours=24)).strftime('%Y-%m-%d') # find the previous day's date (because report is prior day)
 
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/lm_hg201.txt"
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/lm_hg201.txt'
 site_contents=urllib2.urlopen(url).read()
 
-labels= ["Producer Sold", "Packer Sold", "Packer Owned"]  #labels for each of the main categories
+labels= ['Producer Sold', 'Packer Sold', 'Packer Owned']  #labels for each of the main categories
 # The following three lists hold the labels for each sub-category
-labels_prod_sold=["HEAD COUNT", "CARCASS BASE PRICE", "AVERAGE NET PRICE", "LOWEST NET LOT", "HIGHEST NET LOT", \
-        "AVERAGE LIVE WT", "AVERAGE CARCASS WT", "AVERAGE SORT LOSS", "AVERAGE BACKFAT", "AVERAGE LOIN DEPTH (LD)", \
-        "LOINEYE AREA (LD Converted)", "AVERAGE LEAN PERCENT"]
-labels_pack_sold=["HEAD COUNT", "CARCASS BASE PRICE", "AVERAGE NET PRICE", "AVERAGE OF LOWEST NET LOTS", \
-                  "AVERAGE OF HIGHEST NET LOTS", "AVERAGE LIVE WT", "AVERAGE CARCASS WT", "AVERAGE SORT LOSS", \
-                  "AVERAGE BACKFAT", "AVERAGE LOIN DEPTH (LD)", "LOINEYE AREA (LD Converted)", "AVERAGE LEAN PERCENT"]
-labels_pack_owned=["HEAD COUNT", "AVERAGE LIVE WT", "AVERAGE CARCASS WT", "AVERAGE BACKFAT", "AVERAGE LOIN DEPTH (LD)", "AVERAGE LEAN PERCENT"]
+labels_prod_sold=['HEAD COUNT', 'CARCASS BASE PRICE', 'AVERAGE NET PRICE', 'LOWEST NET LOT', 'HIGHEST NET LOT', \
+        'AVERAGE LIVE WT', 'AVERAGE CARCASS WT', 'AVERAGE SORT LOSS', 'AVERAGE BACKFAT', 'AVERAGE LOIN DEPTH (LD)', \
+        'LOINEYE AREA (LD Converted)', 'AVERAGE LEAN PERCENT']
+labels_pack_sold=['HEAD COUNT', 'CARCASS BASE PRICE', 'AVERAGE NET PRICE','AVERAGE OF LOWEST NET LOTS', \
+                  'AVERAGE OF HIGHEST NET LOTS', 'AVERAGE LIVE WT', 'AVERAGE CARCASS WT', 'AVERAGE SORT LOSS', \
+                  'AVERAGE BACKFAT', 'AVERAGE LOIN DEPTH (LD)', 'LOINEYE AREA (LD Converted)', 'AVERAGE LEAN PERCENT']
+labels_pack_owned=['HEAD COUNT', 'AVERAGE LIVE WT', 'AVERAGE CARCASS WT', 'AVERAGE BACKFAT', 'AVERAGE LOIN DEPTH (LD)', 'AVERAGE LEAN PERCENT']
 #store all of the section labels in one list
 section_labels=[labels_prod_sold, labels_pack_sold, labels_pack_owned]
 
@@ -67,9 +67,9 @@ while x<len(labels):
         else:         # if on either of the remaining labels, only 1 data point needs to be stored
             line_grammar=(section_labels[x][s]+Word(printables))       
         start_section_index=site_contents.find(section_labels[x][s], starting_index) # index of where line begins
-        ending_index=site_contents.find("\r\n", start_section_index) # index where line ends
+        ending_index=site_contents.find('\r\n', start_section_index) # index where line ends
         parsed.append(line_grammar.parseString(site_contents[start_section_index:ending_index])) # parse line and store in list
-        parsed[s]=[float(y.replace(",","")) for y in parsed[s][1:]] #remove commas and convert to float
+        parsed[s]=[float(y.replace(',','')) for y in parsed[s][1:]] #remove commas and convert to float
         s=s+1
     # Loops through each line in "parsed" and creates a quandl data set for each line of data    
     b=0

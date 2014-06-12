@@ -36,27 +36,27 @@ import re
 import calendar
 
 # stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/nw_py002.txt"
+url='http://www.ams.usda.gov/mnreports/nw_py002.txt'
 site_contents=urllib2.urlopen(url).read()
 
-begin_index=site_contents.find('  ', site_contents.find("Week ending")) # beginning index of the date
+begin_index=site_contents.find('  ', site_contents.find('Week ending')) # beginning index of the date
 end_index=site_contents.find('\r\n', begin_index) # ending index of the date
 hyphen=site_contents.find('-', begin_index) # find index of the hyphen separating day and month
 day=site_contents[begin_index:hyphen].strip() # store the day 
 next_hyphen=site_contents.find('-', hyphen+1) # find index of hyphen separating month and year
 month=site_contents[hyphen+1:next_hyphen] # store month
 year='20'+site_contents[next_hyphen+1:end_index] # store year and append '20' so it's in YYYY format
-date=datetime.date(int(year), list(calendar.month_name).index(month), int(day)).strftime("%Y-%m-%d") # store date in YYYY-mm-dd format
+date=datetime.date(int(year), list(calendar.month_name).index(month), int(day)).strftime('%Y-%m-%d') # store date in YYYY-mm-dd format
 
-labels=["Head", "Avg Live Wgt"]
-weight_labels=["4.25 lbs & down", "4.26-6.25 lbs", "6.26-7.75 lbs", "7.76 lbs & up", "Total"]
+labels=['Head', 'Avg Live Wgt']
+weight_labels=['4.25 lbs & down', '4.26-6.25 lbs', '6.26-7.75 lbs', '7.76 lbs & up', 'Total']
 lines=[]
 # Loops through each label and adds the data for each in "lines"
 x=0
 while x<len(labels):
     start=site_contents.find(labels[x])
     end=site_contents.find('\r\n', start)
-    line=site_contents[start:end].split("  ")
+    line=site_contents[start:end].split('  ')
     line=[y for y in line[1:] if len(y)!=0]
     line=[float(y.replace(',','')) for y in line]
     lines.append(line)
@@ -65,8 +65,8 @@ while x<len(labels):
 # values for each.
 y=0
 while y<len(weight_labels):
-    headings=["Date", "Head", "Average Live Weight"]
-    data={"Date": [date], "Head": [lines[0][y]], "Average Live Weight": [lines[1][y]]}
+    headings=['Date', 'Head', 'Average Live Weight']
+    data={'Date': [date], 'Head': [lines[0][y]], 'Average Live Weight': [lines[1][y]]}
     data_df = pd.DataFrame(data, columns = headings)
     data_df.index = data_df['Date']
     data_df = data_df.drop('Date', 1)

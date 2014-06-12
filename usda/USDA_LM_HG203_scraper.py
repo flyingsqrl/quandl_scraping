@@ -32,24 +32,24 @@ import pandas as pd
 import datetime 
 import sys
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") # holds the date in YYYY-MM-DD format
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/lm_hg203.txt"
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') # holds the date in YYYY-MM-DD format
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/lm_hg203.txt'
 site_contents=urllib2.urlopen(url).read()
 
-start=site_contents.find("NEGOTIATED PURCHASE") # store the index of the beginning of the negotiated purchase section
-end=site_contents.find("--", start)     # store the index of the end of the negotiated purchase section
-base_price_index=site_contents.rfind("Base Price Range", start, end) # store the index of the beginning of the base price section
-weighted_average_index=site_contents.rfind("Weighted Average", start, end) #store the index of the weighted average section
+start=site_contents.find('NEGOTIATED PURCHASE') # store the index of the beginning of the negotiated purchase section
+end=site_contents.find('--', start)     # store the index of the end of the negotiated purchase section
+base_price_index=site_contents.rfind('Base Price Range', start, end) # store the index of the beginning of the base price section
+weighted_average_index=site_contents.rfind('Weighted Average', start, end) #store the index of the weighted average section
 
-base_price_start=site_contents.find("$", base_price_index) # store the index of where the base price values begin
-base_price_end=site_contents.find(",", base_price_index)   # store the index of where the base price values end
+base_price_start=site_contents.find('$', base_price_index) # store the index of where the base price values begin
+base_price_end=site_contents.find(',', base_price_index)   # store the index of where the base price values end
 
-weighted_average_start=site_contents.find("$", weighted_average_index) # store the index of the beginning of the w.a. value
-weighted_average_end=site_contents.find("\r\n", weighted_average_start) # store the index of the end of the w.a. value
+weighted_average_start=site_contents.find('$', weighted_average_index) # store the index of the beginning of the w.a. value
+weighted_average_end=site_contents.find('\r\n', weighted_average_start) # store the index of the end of the w.a. value
 
-base_price=site_contents[base_price_start+1:base_price_end].split("-") # add the base price min and max range to "base_price"
-base_price=[float(x.replace("$", "").strip()) for x in base_price] # remove $ and convert value to float
+base_price=site_contents[base_price_start+1:base_price_end].split('-') # add the base price min and max range to "base_price"
+base_price=[float(x.replace('$', '').strip()) for x in base_price] # remove $ and convert value to float
 weighted_average=float(site_contents[weighted_average_start+1:weighted_average_end]) # find weighted average and convert to float
 base_price.append(weighted_average) # store weighted average in base_price
 

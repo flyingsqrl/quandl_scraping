@@ -36,7 +36,7 @@ import sys
 
 date=datetime.datetime.now(pytz.timezone('US/Eastern')) 
 date=(date-datetime.timedelta(hours=24)).strftime('%Y-%m-%d')
-# stores report in variable "site_contents"
+# stores report in variable 'site_contents'
 url='http://www.ams.usda.gov/mnreports/lm_hg230.txt'
 site_contents=urllib2.urlopen(url).read()
 

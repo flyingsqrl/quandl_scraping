@@ -35,20 +35,20 @@ import datetime
 import sys
 import re
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") # holds the date in YYYY-MM-DD format
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/gx_gr110.txt"
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') # holds the date in YYYY-MM-DD format
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/gx_gr110.txt'
 site_contents=urllib2.urlopen(url).read()
 
 # Stores the names of the crops for the past 15 days in labels_15 and the names
 # of the crops formatted to be used in the name of the quandl file in labels_15_names
-labels_15=["Soybeans", "Corn", "Corn"]
-labels_15_names=["Soybeans", "Corn (Terminal Elevator)", "Corn (Processor)"]
+labels_15=['Soybeans', 'Corn', 'Corn']
+labels_15_names=['Soybeans', 'Corn (Terminal Elevator)', 'Corn (Processor)']
 
 # Stores the names of the crops for the past 15-30 days in labels_30 and the names
 # of the crops formatted to be used in the name of the quandl file in labels_30_names
-labels_30=["SRW Wheat", "Soybeans", "Corn", "Corn"]
-labels_30_names=["SRW Wheat", "Soybeans", "Corn (Terminal Elevator)", "Corn (Processor)"]
+labels_30=['SRW Wheat', 'Soybeans', 'Corn', 'Corn']
+labels_30_names=['SRW Wheat', 'Soybeans', 'Corn (Terminal Elevator)', 'Corn (Processor)']
 
 # This function takes in an index of a hyphen and returns the minimum and maximum bids
 # Precondition: index is a valid index for a hyphen that separates two numerical values
@@ -65,7 +65,7 @@ ending_index=0 # used in the following loop for indexing, initialized to 0
 # and formats for upload to quandl.
 x=0
 while x<len(labels_15):
-    ending_index=site_contents.find("Spot", ending_index+1) # bids occur before the word "Spot"
+    ending_index=site_contents.find('Spot', ending_index+1) # bids occur before the word "Spot"
     starting_index=site_contents.rfind(labels_15[x], 0, ending_index) # index of the crop name
     hyphen=site_contents.find('-', starting_index) # index of the hyphen that separates the bids
     bids=min_and_max(hyphen) # calls min_and_max and stores the minimum and maximum bids in list "bids"
@@ -104,7 +104,7 @@ ending_index=0  # initializes ending_index to 0
 # and formats for upload to quandl.
 x=0
 while x<len(labels_30):
-    ending_index=site_contents.find("30 Days", ending_index+1) # bids occur before the string "30 Days"
+    ending_index=site_contents.find('30 Days', ending_index+1) # bids occur before the string "30 Days"
     starting_index=site_contents.rfind(labels_30[x],0, ending_index) # index of the crop name
     hyphen=site_contents.find('-', starting_index) # index of the hyphen that seperates the bid values
     bids=min_and_max(hyphen) 

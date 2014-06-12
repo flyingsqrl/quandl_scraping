@@ -34,16 +34,16 @@ import datetime
 import sys
 import re
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") # holds the date in YYYY-MM-DD format
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') # holds the date in YYYY-MM-DD format
 # stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/nw_gr110.txt"
+url='http://www.ams.usda.gov/mnreports/nw_gr110.txt'
 site_contents=urllib2.urlopen(url).read()
 
 # list of each location in the report
-labels=["Northwest", "North Central", "Northeast", "Southwest", "South Central", "Southeast"]
+labels=['Northwest', 'North Central', 'Northeast', 'Southwest', 'South Central', 'Southeast']
 
 # list of each crop in the report
-crop_labels=["#2 Yellow Corn", "#1 Yellow Soybeans"]
+crop_labels=['#2 Yellow Corn', '#1 Yellow Soybeans']
 
 ending_index=0 # initializes to 0 so that it can be later used to divide site_contents into sections
 
@@ -76,10 +76,8 @@ while x<len(labels):
         'at http://mpr.datamart.ams.usda.gov.\n' 
         print 'code: ' + quandl_code+'\n'
         print 'name: '+labels[x]+' Iowa Daily Grain Prices- '+crop_labels[y]+'\n'
-        print 'description: Daily minimum, maximum, and average bids for '+labels[x]+' Iowa '+crop_labels[y]+ \
-        ' from the USDA NW_GR110 report published by the USDA Agricultural Marketing Service ' \
-        '(AMS). Prices represent $/bu.' \
-        + reference_text
+        print 'description: Daily minimum, maximum, and average bids for '+labels[x]+' Iowa '+crop_labels[y]+ ' from the USDA NW_GR110 report published by the USDA Agricultural Marketing Service ' \
+        '(AMS). Prices represent $/bu.' + reference_text
         print 'reference_url: http://www.ams.usda.gov/mnreports/nw_gr110.txt\n'
         print 'frequency: daily\n'
         print 'private: false\n'

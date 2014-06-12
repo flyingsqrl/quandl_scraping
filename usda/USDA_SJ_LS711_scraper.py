@@ -36,8 +36,8 @@ import sys
 import calendar
 
 
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/sj_ls711.txt"
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/sj_ls711.txt'
 site_contents=urllib2.urlopen(url).read()
 
 day=[]
@@ -46,20 +46,20 @@ number_cattle_slaughter=[]
 date_grammar=Word(alphas)+Word(nums)+Suppress(Literal(','))+Word(nums) # grammar for find the date of the report
 
 
-begin=site_contents.find(",", site_contents.find("Week Ending"))+2 # stores index where date begins
-end=site_contents.find("\r\n", begin) # stores index of end of date
+begin=site_contents.find(',', site_contents.find('Week Ending'))+2 # stores index where date begins
+end=site_contents.find('\r\n', begin) # stores index of end of date
 date=date_grammar.parseString(site_contents[begin:end]) # parse date to find month, day, and year
 date=datetime.date(int(date[2]), list(calendar.month_name).index(date[0]), int(date[1])) # create a datetime object 
                                                                                          # with the previously parsed string
-starting_day=site_contents.find("Monday", site_contents.find("Bison 1/")) # store index of beginning of first data section
-ending_day=site_contents.find("---", starting_day) # store index of end of first data section
+starting_day=site_contents.find('Monday', site_contents.find('Bison 1/')) # store index of beginning of first data section
+ending_day=site_contents.find('---', starting_day) # store index of end of first data section
 section=site_contents[starting_day:ending_day] # store data section
 
 unparsed=[] # list that will later hold unparsed lines
 parsed=[] # list that will later hold parsed lines
 # Loops through first section of data and finds the slaughter for each day
-while site_contents.find("\r\n", starting_day, ending_day)!=-1:
-    end_line=site_contents.find("\r\n", starting_day)
+while site_contents.find('\r\n', starting_day, ending_day)!=-1:
+    end_line=site_contents.find('\r\n', starting_day)
     unparsed.append(site_contents[starting_day:end_line])
     starting_day=end_line+2
 cattle_slaughter=Word(alphas)+Word(printables) | Word(alphas)+Literal("-") # grammar for daily cattle slaughter
@@ -72,17 +72,17 @@ while x<len(unparsed):
     x=x+1
 number_cattle_slaughter=[float(g.replace(',','')) for g in number_cattle_slaughter] # remove commas and convert each value to a float
 
-starting=site_contents.find("Beef", site_contents.find("Meat Production, Live Weight and Dressed Weight")) # store index of beginning of second data section
-weight=Suppress(Literal("Beef"))+Word(printables) # grammar for finding weight of beef production
+starting=site_contents.find('Beef', site_contents.find('Meat Production, Live Weight and Dressed Weight')) # store index of beginning of second data section
+weight=Suppress(Literal('Beef'))+Word(printables) # grammar for finding weight of beef production
 weight=float((weight.parseString(site_contents[starting:]))[0])
-starting=site_contents.find("Cattle", starting)
+starting=site_contents.find('Cattle', starting)
 word=Suppress(Word(alphas))+Word(nums)
 weights=Suppress(Word(alphas))+Word(printables)+Word(nums)+word*4
 average_live_weight=float((weights.parseString(site_contents[starting:]))[0].replace(',',''))
 average_dressed_weight=float((weights.parseString(site_contents[starting:]))[1])
 average_weights=weights.parseString(site_contents[starting:])[2:]
 
-starting=site_contents.find("Cattle", site_contents.find("Federally Inspected Slaughter Head & Percentage by Class"))
+starting=site_contents.find('Cattle', site_contents.find('Federally Inspected Slaughter Head & Percentage by Class'))
 suppress=Suppress(Word(printables))
 word=Word(alphas)+ZeroOrMore(Word(alphas))
 number=Word(printables)
@@ -170,7 +170,7 @@ data_df.to_csv(sys.stdout)
 print '\n'
 print '\n'
 
-name_labels=["Steers", "Heifers", "Cows", "Bulls"]
+name_labels=['Steers', 'Heifers', 'Cows', 'Bulls']
 x=0
 while x<len(average_weights):
     headings = [ 'Date', 'Average Weight']

@@ -35,24 +35,24 @@ import pandas as pd
 import datetime
 import sys
 
-date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d") #holds the date in YYYY-MM-DD format
-# stores report in variable "site_contents"
-url="http://www.ams.usda.gov/mnreports/lm_xb403.txt"
+date=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d') #holds the date in YYYY-MM-DD format
+# stores report in variable 'site_contents'
+url='http://www.ams.usda.gov/mnreports/lm_xb403.txt'
 site_contents=urllib2.urlopen(url).read()
 
-name=Literal("Current Cutout Values:")
+name=Literal('Current Cutout Values:')
 line=name+Word(nums+'.')+Word(nums+'.') # grammar for current cutout values
-starting_index=site_contents.find("Current Cutout Values:")
-ending_index=site_contents.find("\r\n", starting_index)
+starting_index=site_contents.find('Current Cutout Values:')
+ending_index=site_contents.find('\r\n', starting_index)
 ccv=line.parseString(site_contents[starting_index:ending_index]) # parse line into its data components
 
 current_choice_value=ccv[1] # store choice value
 current_select_value=ccv[2] # store select value
 
-name=Literal("Fresh 50% lean trimmings")
+name=Literal('Fresh 50% lean trimmings')
 line=name+Word(nums)+Word(nums+','+'.')*4 # grammar for lean trimmings values
-starting_index=site_contents.find("Fresh 50% lean trimmings") # start index of line of data
-ending_index=site_contents.find("\r\n", starting_index) # end index of line of data
+starting_index=site_contents.find('Fresh 50% lean trimmings') # start index of line of data
+ending_index=site_contents.find('\r\n', starting_index) # end index of line of data
 beef_trimmings=line.parseString(site_contents[starting_index:ending_index]) # parse line of data
 weight=float(beef_trimmings[2].replace(',', '')) # remove commas and convert weight to float
 min_price=float(beef_trimmings[3]) # store minimum price
